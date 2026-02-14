@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Valentine Surprise 💖</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ffdde9, #ffe6f5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .page { display: none; text-align: center; }
+    .active { display: block; }
+
+    button {
+      padding: 14px 32px;
+      font-size: 18px;
+      border: none;
+      border-radius: 40px;
+      background: #ff4f9a;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(255,79,154,.4);
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    input {
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 20px;
+      border: 2px solid #ff9ccc;
+      text-align: center;
+      width: 200px;
+    }
+
+    h1, h2 { color: #ff4f9a; }
+
+    #heartBox {
+      width: 230px;
+      height: 230px;
+      margin: 25px auto;
+      background: #ffd6ec;
+      border-radius: 40px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(255,79,154,.35);
+    }
+
+    #heart {
+      font-size: 95px;
+      line-height: 230px;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      animation: beat 1.1s infinite;
+    }
+
+    @keyframes beat {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    #progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(#ff8acb, #ff4f9a);
+      transition: height 0.1s;
+      z-index: 1;
+    }
+
+    #revealVideo {
+      display: none;
+      width: 320px;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(255,79,154,.4);
+      animation: pop 0.8s ease forwards;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(.6); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- หน้าเริ่ม -->
+  <div id="page1" class="page active">
+    <h1>💌 มีเซอร์ไพรส์นะ</h1>
+    <button onclick="goPage(2)">กดเลย 💕</button>
+  </div>
+
+  <!-- ใส่รหัส -->
+  <div id="page2" class="page">
+    <h2>ใส่รหัสวันวาเลนไทน์ 💘</h2>
+    <input type="password" id="code" placeholder="14022024" />
+    <br><br>
+    <button onclick="checkCode()">ยืนยัน</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <!-- หน้าเซอร์ไพรส์ -->
+  <div id="page3" class="page">
+    <h1>Happy Valentine’s Day 💖</h1>
+    <p>กดหัวใจค้างไว้ให้เต็มเลยนะ 💗</p>
+
+    <div id="heartBox">
+      <div id="heart">❤️</div>
+      <div id="progress"></div>
+    </div>
+
+    <video id="revealVideo" src="copy_61C92E49-F9AD-45B9-B4CF-AA516B563372.MOV" controls></video>
+  </div>
+
+<script>
+  const valentineCode = "20112568";
+
+  function goPage(n) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page' + n).classList.add('active');
+  }
+
+  function checkCode() {
+    const input = document.getElementById('code').value;
+    if (input === valentineCode) {
+      goPage(3);
+      setTimeout(initHeartHold, 300);
+    } else {
+      document.getElementById('error').innerText = 'รหัสไม่ถูกต้องน้า 😝';
+    }
+  }
+
+  let holdInterval;
+  let percent = 0;
+
+  function initHeartHold() {
+    const heart = document.getElementById('heart');
+    const progress = document.getElementById('progress');
+    const video = document.getElementById('revealVideo');
+
+    function startHold() {
+      holdInterval = setInterval(() => {
+        percent += 1;
+        progress.style.height = percent + '%';
+        if (percent >= 100) {
+          clearInterval(holdInterval);
+          heart.style.display = 'none';
+          progress.style.display = 'none';
+          video.style.display = 'block';
+          video.play();
+          launchHearts();
+        }
+      }, 25);
+    }
+
+    function stopHold() {
+      clearInterval(holdInterval);
+    }
+
+    heart.addEventListener('mousedown', startHold);
+    heart.addEventListener('mouseup', stopHold);
+    heart.addEventListener('mouseleave', stopHold);
+    heart.addEventListener('touchstart', startHold);
+    heart.addEventListener('touchend', stopHold);
+  }
+
+  function launchHearts() {
+    for (let i = 0; i < 50; i++) {
+      const heart = document.createElement('div');
+      heart.innerText = '💖';
+      heart.style.position = 'absolute';
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.bottom = '-30px';
+      heart.style.fontSize = 20 + Math.random() * 30 + 'px';
+      heart.style.animation = 'floatUp 3s ease-out forwards';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 3000);
+    }
+  }
+</script>
+
+</body>
+</html>
